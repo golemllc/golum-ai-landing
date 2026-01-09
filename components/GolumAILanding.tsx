@@ -12,7 +12,7 @@ import {
   Database,
   Globe,
   Lock,
- Sparkles,
+  Sparkles,
   Workflow,
 } from "lucide-react";
 
@@ -21,9 +21,9 @@ import {
 
 const cx = (...c: Array<string | false | null | undefined>) => c.filter(Boolean).join(" ");
 
-
 function usePrefersReducedMotion() {
   const [reduced, setReduced] = useState(false);
+
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(mq.matches);
@@ -31,14 +31,16 @@ function usePrefersReducedMotion() {
     mq.addEventListener?.("change", update);
     return () => mq.removeEventListener?.("change", update);
   }, []);
+
   return reduced;
 }
 
-function GlowOrb({ className = "", seed = 1 }) {
+function GlowOrb({ className = "", seed = 1 }: { className?: string; seed?: number }) {
   // Procedural glow blob (SVG) for background accents
   const r1 = 120 + (seed % 3) * 20;
   const r2 = 180 + (seed % 4) * 18;
   const hue = 155 + (seed % 6) * 18;
+
   return (
     <svg
       className={cx("absolute blur-3xl opacity-60", className)}
@@ -60,7 +62,7 @@ function GlowOrb({ className = "", seed = 1 }) {
   );
 }
 
-function QuantumGrid({ className = "" }) {
+function QuantumGrid({ className = "" }: { className?: string }) {
   // Animated grid with subtle scanline shimmer
   return (
     <div className={cx("absolute inset-0", className)} aria-hidden>
@@ -71,15 +73,23 @@ function QuantumGrid({ className = "" }) {
         initial={{ y: "-60%" }}
         animate={{ y: "160%" }}
         transition={{ duration: 6.5, repeat: Infinity, ease: "linear" }}
-        style={{ mixBlendMode: "screen" }}
+        style={{ mixBlendMode: "screen" as any }}
       />
       <div className="absolute inset-0 [mask-image:radial-gradient(circle_at_50%_35%,black,transparent_70%)] bg-[radial-gradient(circle_at_50%_50%,rgba(250,204,21,0.08),transparent_58%)]" />
     </div>
   );
 }
 
-function MagneticButton({ children, className = "", onClick }) {
-  const ref = useRef(null);
+function MagneticButton({
+  children,
+  className = "",
+  onClick,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}) {
+  const ref = useRef<HTMLButtonElement | null>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const sx = useSpring(x, { stiffness: 320, damping: 20 });
@@ -117,7 +127,7 @@ function MagneticButton({ children, className = "", onClick }) {
   );
 }
 
-function Pill({ children, icon: Icon }) {
+function Pill({ children, icon: Icon }: { children: React.ReactNode; icon?: any }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-full bg-white/6 px-4 py-2 text-xs text-white/80 ring-1 ring-white/10">
       {Icon ? <Icon className="h-4 w-4 text-emerald-300" /> : null}
@@ -126,7 +136,15 @@ function Pill({ children, icon: Icon }) {
   );
 }
 
-function SectionTitle({ kicker, title, subtitle }) {
+function SectionTitle({
+  kicker,
+  title,
+  subtitle,
+}: {
+  kicker: string;
+  title: string;
+  subtitle?: string;
+}) {
   return (
     <div className="mx-auto max-w-3xl text-center">
       <div className="mb-3 flex items-center justify-center">
@@ -135,31 +153,27 @@ function SectionTitle({ kicker, title, subtitle }) {
           {kicker}
         </span>
       </div>
-      <h2 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-        {title}
-      </h2>
+      <h2 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">{title}</h2>
       {subtitle ? (
-        <p className="mt-4 text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
-          {subtitle}
-        </p>
+        <p className="mt-4 text-pretty text-base leading-relaxed text-white/70 sm:text-lg">{subtitle}</p>
       ) : null}
     </div>
   );
 }
 
-function HowItWorksTimeline({ reducedMotion: boolean}) {
+function HowItWorksTimeline({ reducedMotion }: { reducedMotion: boolean }) {
   const steps = useMemo(
     () => [
       {
         title: "Connect",
         icon: Blocks,
-        desc: "Plug into POS, inventory, e‑commerce, and compliance systems. Golum maps your data into a live operational graph.",
+        desc: "Plug into POS, inventory, e-commerce, and compliance systems. Golum maps your data into a live operational graph.",
         tag: "APIs + Connectors",
       },
       {
         title: "Understand",
         icon: Brain,
-        desc: "Dispensary‑GPT reads sales, demand signals, product velocity, and customer behavior, then explains what matters in plain English.",
+        desc: "Dispensary-GPT reads sales, demand signals, product velocity, and customer behavior, then explains what matters in plain English.",
         tag: "Grounded Insights",
       },
       {
@@ -172,7 +186,7 @@ function HowItWorksTimeline({ reducedMotion: boolean}) {
         title: "Execute",
         icon: Workflow,
         desc: "Approve actions and let Golum automate safe, reversible moves with audit logs, confidence thresholds, and rollback.",
-        tag: "Closed‑Loop Ops",
+        tag: "Closed-Loop Ops",
       },
       {
         title: "Prove",
@@ -198,13 +212,9 @@ function HowItWorksTimeline({ reducedMotion: boolean}) {
               whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
               transition={{ duration: 0.6, delay: i * 0.05 }}
-              className={cx(
-                "relative",
-                "grid items-stretch gap-4",
-                "lg:grid-cols-2"
-              )}
+              className={cx("relative", "grid items-stretch gap-4", "lg:grid-cols-2")}
             >
-              <div className={cx(isLeft ? "lg:col-start-1" : "lg:col-start-2")}> 
+              <div className={cx(isLeft ? "lg:col-start-1" : "lg:col-start-2")}>
                 <div className="group relative overflow-hidden rounded-3xl bg-white/6 p-6 ring-1 ring-white/12 backdrop-blur-xl">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.25),transparent_55%)] opacity-0 transition group-hover:opacity-100" />
                   <div className="relative z-10 flex items-start gap-4">
@@ -218,9 +228,7 @@ function HowItWorksTimeline({ reducedMotion: boolean}) {
                           {s.tag}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm leading-relaxed text-white/70">
-                        {s.desc}
-                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-white/70">{s.desc}</p>
                     </div>
                   </div>
                 </div>
@@ -255,7 +263,7 @@ function HowItWorksTimeline({ reducedMotion: boolean}) {
   );
 }
 
-function ProductCards({ reducedMotion: boolean  }) {
+function ProductCards({ reducedMotion }: { reducedMotion: boolean }) {
   const products = [
     {
       title: "Digital Twin",
@@ -264,13 +272,13 @@ function ProductCards({ reducedMotion: boolean  }) {
       bullets: [
         "Test reorder policies & promos before going live",
         "Model demand waves, stockout risk, and margin impact",
-        "What‑if scenarios for labor & wholesale fulfillment",
+        "What-if scenarios for labor & wholesale fulfillment",
       ],
       accent: "from-emerald-400/25 via-sky-400/15 to-amber-300/10",
     },
     {
       title: "Digital Worker",
-      subtitle: "Dispensary‑GPT",
+      subtitle: "Dispensary-GPT",
       icon: Brain,
       bullets: [
         "Answers questions about inventory, sales, and customers instantly",
@@ -331,13 +339,22 @@ function ProductCards({ reducedMotion: boolean  }) {
   );
 }
 
-function AnimatedTerminal({ reducedMotion: boolean }) {
+function AnimatedTerminal({ reducedMotion }: { reducedMotion: boolean }) {
   const lines = useMemo(
     () => [
       { k: "query", v: "How are we trending vs forecast today?" },
-      { k: "golum", v: "Sales are +7% vs forecast. Basket size is down $3. VIPs are shifting to edibles (+12% WoW)." },
-      { k: "golum", v: "Top threats: (1) Pre‑rolls stockout in 9 hours. (2) Low conversion at checkout. (3) High churn risk: Loyalty Tier B." },
-      { k: "golum", v: "Actions: (A) Restock pre‑rolls 50 units. (B) Auto‑send VIP edible promo. (C) Enable 10% basket upsell at checkout." },
+      {
+        k: "golum",
+        v: "Sales are +7% vs forecast. Basket size is down $3. VIPs are shifting to edibles (+12% WoW).",
+      },
+      {
+        k: "golum",
+        v: "Top threats: (1) Pre-rolls stockout in 9 hours. (2) Low conversion at checkout. (3) High churn risk: Loyalty Tier B.",
+      },
+      {
+        k: "golum",
+        v: "Actions: (A) Restock pre-rolls 50 units. (B) Auto-send VIP edible promo. (C) Enable 10% basket upsell at checkout.",
+      },
       { k: "golum", v: "Confidence: 0.86 · Rollback window: 15 min · Audit log: enabled" },
     ],
     []
@@ -360,7 +377,7 @@ function AnimatedTerminal({ reducedMotion: boolean }) {
         </div>
         <div className="flex items-center gap-2 text-[11px] text-white/50">
           <Lock className="h-4 w-4" />
-          Evidence‑grounded
+          Evidence-grounded
         </div>
       </div>
 
@@ -415,7 +432,7 @@ function AnimatedTerminal({ reducedMotion: boolean }) {
         initial={{ y: "-40%" }}
         animate={reducedMotion ? {} : { y: ["-40%", "120%", "-40%"] }}
         transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
-        style={{ mixBlendMode: "screen" }}
+        style={{ mixBlendMode: "screen" as any }}
       />
     </div>
   );
@@ -425,20 +442,17 @@ function FAQ() {
   const faqs = [
     {
       q: "Is Golum AI a chatbot or an operations system?",
-      a: "Both. Golum is Dispensary‑GPT for instant answers, plus a closed‑loop ops layer that can recommend and execute approved actions with audit logs.",
+      a: "Both. Golum is Dispensary-GPT for instant answers, plus a closed-loop ops layer that can recommend and execute approved actions with audit logs.",
     },
     {
       q: "How do integrations work?",
-      a: "We connect via secure APIs/webhooks to POS, inventory, e‑commerce, and compliance tools. Data is normalized into a live operational graph.",
+      a: "We connect via secure APIs/webhooks to POS, inventory, e-commerce, and compliance tools. Data is normalized into a live operational graph.",
     },
     {
-      q: "What makes it quantum‑era / futuristic?",
+      q: "What makes it quantum-era / futuristic?",
       a: "We use probabilistic forecasting, confidence gating, and simulation (Digital Twin) so decisions are based on probability and survivability not guesses.",
     },
-    {
-      q: "Do you support Dutchie?",
-      a: "Yes. Digital Worker is designed to sit on top of Dutchie workflows and execute safe actions inside existing operational constraints.",
-    },
+    { q: "Do you support Dutchie?", a: "Yes. Digital Worker is designed to sit on top of Dutchie workflows and execute safe actions inside existing operational constraints." },
   ];
 
   return (
@@ -471,9 +485,7 @@ function Footer() {
             <div className="text-xs text-white/55">Tech Solutions & Blockchain</div>
           </div>
         </div>
-        <div className="text-xs text-white/55">
-          © {new Date().getFullYear()} Golum AI. All rights reserved.
-        </div>
+        <div className="text-xs text-white/55">© {new Date().getFullYear()} Golum AI. All rights reserved.</div>
       </div>
     </footer>
   );
@@ -482,8 +494,7 @@ function Footer() {
 export default function GolumAILanding() {
   const reducedMotion = usePrefersReducedMotion();
 
- const scrollTo = (id: string) => {
-
+  const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     el?.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
   };
@@ -534,7 +545,7 @@ export default function GolumAILanding() {
             >
               Sign in
             </a>
-            <MagneticButton onClick={() => scrollTo("cta")} className="">
+            <MagneticButton onClick={() => scrollTo("cta")}>
               Request demo <ArrowRight className="h-4 w-4" />
             </MagneticButton>
           </div>
@@ -558,7 +569,10 @@ export default function GolumAILanding() {
                 transition={{ duration: 0.7 }}
                 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-6xl"
               >
-                Next‑Gen operations for dispensaries powered by <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-sky-200 to-amber-200">Golum AI</span>
+                Next-Gen operations for dispensaries powered by{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-sky-200 to-amber-200">
+                  Golum AI
+                </span>
               </motion.h1>
 
               <motion.p
@@ -567,13 +581,15 @@ export default function GolumAILanding() {
                 transition={{ duration: 0.7, delay: 0.08 }}
                 className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg"
               >
-                Golum is a Dispensary‑GPT that understands your inventory, sales, customers, and wholesale flows, then recommends and executes safe, evidence‑grounded actions.
+                Golum is a Dispensary-GPT that understands your inventory, sales, customers, and wholesale flows,
+                then recommends and executes safe, evidence-grounded actions.
               </motion.p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <MagneticButton onClick={() => scrollTo("cta")} className="">
+                <MagneticButton onClick={() => scrollTo("cta")}>
                   Get a demo <ArrowRight className="h-4 w-4" />
                 </MagneticButton>
+
                 <a
                   href="#how"
                   onClick={(e) => {
@@ -587,16 +603,11 @@ export default function GolumAILanding() {
               </div>
 
               <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                {[{
-                  label: "Faster decisions",
-                  value: "Minutes",
-                }, {
-                  label: "Confidence gating",
-                  value: "Probabilistic",
-                }, {
-                  label: "Auditability",
-                  value: "End‑to‑end",
-                }].map((s) => (
+                {[
+                  { label: "Faster decisions", value: "Minutes" },
+                  { label: "Confidence gating", value: "Probabilistic" },
+                  { label: "Auditability", value: "End-to-end" },
+                ].map((s) => (
                   <div key={s.label} className="rounded-3xl bg-white/6 p-5 ring-1 ring-white/10 backdrop-blur-xl">
                     <div className="text-xs font-semibold text-white/55">{s.label}</div>
                     <div className="mt-2 text-2xl font-semibold text-white">{s.value}</div>
@@ -612,6 +623,7 @@ export default function GolumAILanding() {
               className="relative"
             >
               <AnimatedTerminal reducedMotion={reducedMotion} />
+
               <motion.div
                 aria-hidden
                 className="pointer-events-none absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-emerald-300/25 blur-2xl"
@@ -633,7 +645,7 @@ export default function GolumAILanding() {
           <SectionTitle
             kicker="Products"
             title="Two core modules. One unified intelligence layer."
-            subtitle="Build a living operations system: simulate reality with Digital Twin, then execute with a Digital Worker that lives in your workflow." 
+            subtitle="Build a living operations system: simulate reality with Digital Twin, then execute with a Digital Worker that lives in your workflow."
           />
           <ProductCards reducedMotion={reducedMotion} />
         </section>
@@ -643,7 +655,7 @@ export default function GolumAILanding() {
           <SectionTitle
             kicker="How it works"
             title="A closed-loop intelligence system which is grounded, safe and auditable"
-            subtitle="Golum turns raw data into actions using simulation, probabilistic forecasting, and confidence gating. Everything can be approved, audited, and rolled back." 
+            subtitle="Golum turns raw data into actions using simulation, probabilistic forecasting, and confidence gating. Everything can be approved, audited, and rolled back."
           />
           <HowItWorksTimeline reducedMotion={reducedMotion} />
         </section>
@@ -653,23 +665,27 @@ export default function GolumAILanding() {
           <SectionTitle
             kicker="Why Golum"
             title="From dashboards to survivability - your operations become a living organism"
-            subtitle="We combine AI, simulation, and blockchain-ready auditability to reduce stockouts, protect margins, and compress operational risk." 
+            subtitle="We combine AI, simulation, and blockchain-ready auditability to reduce stockouts, protect margins, and compress operational risk."
           />
 
           <div className="mx-auto mt-10 grid max-w-6xl gap-6 lg:grid-cols-3">
-            {[{
-              icon: Database,
-              title: "Operational Graph",
-              desc: "Your POS, inventory, e‑com, and compliance data normalized into a single source of truth for reasoning.",
-            }, {
-              icon: Cpu,
-              title: "Digital Twin Sandbox",
-              desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro‑actions.",
-            }, {
-              icon: Lock,
-              title: "Audit + Control",
-              desc: "Every recommendation includes evidence, confidence, abort conditions, and rollback windows. Blockchain-ready ledger if needed.",
-            }].map((c) => (
+            {[
+              {
+                icon: Database,
+                title: "Operational Graph",
+                desc: "Your POS, inventory, e-com, and compliance data normalized into a single source of truth for reasoning.",
+              },
+              {
+                icon: Cpu,
+                title: "Digital Twin Sandbox",
+                desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro-actions.",
+              },
+              {
+                icon: Lock,
+                title: "Audit + Control",
+                desc: "Every recommendation includes evidence, confidence, abort conditions, and rollback windows. Blockchain-ready ledger if needed.",
+              },
+            ].map((c) => (
               <motion.div
                 key={c.title}
                 initial={reducedMotion ? false : { opacity: 0, y: 14 }}
@@ -699,7 +715,8 @@ export default function GolumAILanding() {
                 </div>
                 <h3 className="mt-3 text-2xl font-semibold text-white">Designed for trust, compliance, and speed</h3>
                 <p className="mt-2 max-w-2xl text-sm text-white/70">
-                  Whether you need an immutable audit trail or simply enterprise-grade tracking, Golum’s action layer is built for secure execution in regulated industries.
+                  Whether you need an immutable audit trail or simply enterprise-grade tracking, Golum’s action layer is built
+                  for secure execution in regulated industries.
                 </p>
               </div>
               <MagneticButton onClick={() => scrollTo("cta")}>
@@ -714,7 +731,7 @@ export default function GolumAILanding() {
           <SectionTitle
             kicker="FAQ"
             title="Everything you need to know"
-            subtitle="If you’re building the next generation of dispensary operations, we’re building the intelligence layer." 
+            subtitle="If you’re building the next generation of dispensary operations, we’re building the intelligence layer."
           />
           <FAQ />
         </section>
@@ -730,10 +747,11 @@ export default function GolumAILanding() {
                   Ready to deploy a Digital Worker + Digital Twin?
                 </h3>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70">
-                  We’re onboarding beta partners across the USA. If you run dispensary operations, we’ll help you connect, simulate, and automate in weeks.
+                  We’re onboarding beta partners across the USA. If you run dispensary operations, we’ll help you connect,
+                  simulate, and automate in weeks.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center gap-3">
-                  <Pill icon={Lock}>Evidence‑grounded answers</Pill>
+                  <Pill icon={Lock}>Evidence-grounded answers</Pill>
                   <Pill icon={Workflow}>Approval + rollback</Pill>
                   <Pill icon={Blocks}>Audit layer</Pill>
                 </div>
@@ -776,3 +794,4 @@ export default function GolumAILanding() {
     </div>
   );
 }
+
