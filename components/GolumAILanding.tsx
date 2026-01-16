@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
-import { motion, AnimatePresence, useMotionValue, useSpring } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -17,9 +17,6 @@ import {
   Workflow,
 } from "lucide-react";
 
-// Golem AI — Futuristic / Quantum-era landing page (Dark + Neon Gold)
-// Single-file React component (Tailwind + Framer Motion). No external assets required.
-
 const cx = (...c: Array<string | false | null | undefined>) => c.filter(Boolean).join(" ");
 
 function usePrefersReducedMotion() {
@@ -30,199 +27,115 @@ function usePrefersReducedMotion() {
     const update = () => setReduced(mq.matches);
     update();
 
+    // Modern browsers
     if (mq.addEventListener) {
       mq.addEventListener("change", update);
       return () => mq.removeEventListener("change", update);
     }
-// Safari fallback (older WebKit)
-const legacyMq = mq as MediaQueryList & {
-  addListener?: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => any) => void;
-  removeListener?: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => any) => void;
-};
 
-legacyMq.addListener?.(update as any);
-return () => legacyMq.removeListener?.(update as any);
+    // Safari fallback (older WebKit)
+    const legacyMq = mq as MediaQueryList & {
+      addListener?: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => any) => void;
+      removeListener?: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => any) => void;
+    };
 
+    legacyMq.addListener?.(update as any);
+    return () => legacyMq.removeListener?.(update as any);
   }, []);
 
   return reduced;
 }
 
-/** Deterministic pseudo-random in [0,1) from a seed (avoids hydration mismatch). */
-function prng(seed: number) {
-  const x = Math.sin(seed * 999.123 + 0.12345) * 10000;
-  return x - Math.floor(x);
+function GlowOrb({ className = "", seed = 1 }: { className?: string; seed?: number }) {
+  // Procedural glow blob (SVG) for background accents (teal/cyan)
+  const r1 = 120 + (seed % 3) * 20;
+  const r2 = 180 + (seed % 4) * 18;
+  const hue = 155 + (seed % 6) * 18;
+
+  return (
+    <svg
+      className={cx("absolute blur-3xl opacity-60", className)}
+      width="560"
+      height="560"
+      viewBox="0 0 560 560"
+      aria-hidden
+    >
+      <defs>
+        <radialGradient id={`g-${seed}`} cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor={`hsl(${hue} 95% 70% / 0.85)`} />
+          <stop offset="45%" stopColor={`hsl(${hue + 40} 95% 65% / 0.35)`} />
+          <stop offset="100%" stopColor="transparent" />
+        </radialGradient>
+      </defs>
+      <circle cx="280" cy="280" r={r2} fill={`url(#g-${seed})`} />
+      <circle cx="220" cy="240" r={r1} fill={`url(#g-${seed})`} opacity="0.75" />
+    </svg>
+  );
 }
 
-function QuantumBackdrop({ reducedMotion }: { reducedMotion: boolean }) {
-  // Cursor sphere motion values (viewport coords)
-  const mx = useMotionValue(0);
-  const my = useMotionValue(0);
-  const sx = useSpring(mx, { stiffness: 220, damping: 28 });
-  const sy = useSpring(my, { stiffness: 220, damping: 28 });
+function QuantumGrid({ className = "", reducedMotion }: { className?: string; reducedMotion: boolean }) {
+  return (
+    <div className={cx("absolute inset-0", className)} aria-hidden>
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_40%,rgba(56,189,248,0.18),transparent_55%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[size:56px_56px] opacity-40" />
+      {!reducedMotion ? (
+        <motion.div
+          className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent,rgba(16,185,129,0.18),transparent)]"
+          initial={{ y: "-60%" }}
+          animate={{ y: "160%" }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: "linear" }}
+          style={{ mixBlendMode: "screen" }}
+        />
+      ) : null}
+      <div className="absolute inset-0 [mask-image:radial-gradient(circle_at_50%_35%,black,transparent_70%)] bg-[radial-gradient(circle_at_50%_50%,rgba(250,204,21,0.05),transparent_58%)]" />
+    </div>
+  );
+}
+
+/**
+ * Cursor orb that tracks the real cursor 1:1 (no spring smoothing).
+ * Uses rAF to avoid flooding updates.
+ */
+function CursorOrb({ reducedMotion }: { reducedMotion: boolean }) {
+  const x = useMotionValue(-100);
+  const y = useMotionValue(-100);
 
   useEffect(() => {
     if (reducedMotion) return;
 
-    mx.set(window.innerWidth * 0.5);
-    my.set(window.innerHeight * 0.35);
+    let raf = 0;
+    let px = 0;
+    let py = 0;
 
     const onMove = (e: PointerEvent) => {
-      mx.set(e.clientX);
-      my.set(e.clientY);
+      px = e.clientX;
+      py = e.clientY;
+
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        x.set(px);
+        y.set(py);
+        raf = 0;
+      });
     };
 
     window.addEventListener("pointermove", onMove, { passive: true });
-    return () => window.removeEventListener("pointermove", onMove);
-  }, [reducedMotion, mx, my]);
+    return () => {
+      window.removeEventListener("pointermove", onMove);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, [reducedMotion, x, y]);
 
-  const particles = useMemo(() => {
-    const n = 56;
-    return Array.from({ length: n }).map((_, i) => {
-      const a = prng(i + 1);
-      const b = prng((i + 1) * 7);
-      const c = prng((i + 1) * 19);
-      const d = prng((i + 1) * 31);
-
-      return {
-        id: i,
-        x: a * 100,
-        y: b * 100,
-        s: 0.5 + c * 0.95,
-        dur: 2.8 + d * 4.2,
-        base: 0.12 + c * 0.22,
-        drift: 8 + d * 18,
-      };
-    });
-  }, []);
+  if (reducedMotion) return null;
 
   return (
-    <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden>
-      {/* Dark + neon-gold field */}
-      <div className="absolute inset-0 bg-[#040308]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.07),transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_15%,rgba(250,204,21,0.14),transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_75%_35%,rgba(251,191,36,0.10),transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_60%_92%,rgba(255,215,115,0.08),transparent_58%)]" />
-
-      {/* Golden energy rings */}
-      {!reducedMotion ? (
-        <>
-          <motion.div
-            className="absolute left-1/2 top-1/2 h-[1120px] w-[1120px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-45 blur-2xl"
-            style={{
-              background:
-                "conic-gradient(from 180deg, rgba(250,204,21,0.0), rgba(250,204,21,0.22), rgba(251,191,36,0.16), rgba(255,255,255,0.06), rgba(250,204,21,0.0))",
-              mixBlendMode: "screen",
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 38, repeat: Infinity, ease: "linear" }}
-          />
-          <motion.div
-            className="absolute left-1/2 top-1/2 h-[780px] w-[780px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-35 blur-xl"
-            style={{
-              background:
-                "conic-gradient(from 0deg, rgba(251,191,36,0.0), rgba(251,191,36,0.22), rgba(250,204,21,0.12), rgba(255,255,255,0.05), rgba(251,191,36,0.0))",
-              mixBlendMode: "screen",
-            }}
-            animate={{ rotate: -360 }}
-            transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
-          />
-        </>
-      ) : null}
-
-      {/* Perspective quantum grid (golden) */}
-      <motion.div
-        className="absolute inset-0 opacity-55"
-        style={{
-          transform: "perspective(1100px) rotateX(62deg)",
-          transformOrigin: "center top",
-          mixBlendMode: "screen",
-        }}
-        animate={reducedMotion ? {} : { y: [0, 12, 0] }}
-        transition={{ duration: 9.5, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <motion.div
-          className="absolute inset-[-40%]"
-          style={{
-            backgroundImage:
-              "linear-gradient(to right, rgba(255,231,153,0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,231,153,0.08) 1px, transparent 1px)",
-            backgroundSize: "64px 64px",
-            filter: "drop-shadow(0 0 22px rgba(250,204,21,0.18))",
-          }}
-          animate={
-            reducedMotion
-              ? {}
-              : {
-                  backgroundPositionX: ["0px", "64px"],
-                  backgroundPositionY: ["0px", "64px"],
-                }
-          }
-          transition={{ duration: 7.4, repeat: Infinity, ease: "linear" }}
-        />
-        <div className="absolute inset-x-0 top-[18%] h-px bg-gradient-to-r from-transparent via-amber-300/45 to-transparent" />
-      </motion.div>
-
-      {/* Particles */}
-      <div className="absolute inset-0">
-        {particles.map((p) => (
-          <motion.div
-            key={p.id}
-            className="absolute rounded-full"
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              width: `${p.s * 6}px`,
-              height: `${p.s * 6}px`,
-              background: "rgba(255,231,153,0.92)",
-              opacity: p.base,
-              boxShadow: "0 0 18px rgba(250,204,21,0.22)",
-              transform: "translate3d(0,0,0)",
-            }}
-            animate={
-              reducedMotion
-                ? {}
-                : {
-                    opacity: [p.base * 0.6, p.base * 1.35, p.base * 0.7],
-                    y: [0, -p.drift, 0],
-                  }
-            }
-            transition={{ duration: p.dur, repeat: Infinity, ease: "easeInOut" }}
-          />
-        ))}
-      </div>
-
-      {/* Cursor: tiny neon-gold sphere */}
-      {!reducedMotion ? (
-        <motion.div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ x: sx, y: sy }}>
-          <div className="h-3 w-3 rounded-full bg-amber-200/95 shadow-[0_0_0_6px_rgba(250,204,21,0.10),0_0_28px_rgba(250,204,21,0.35)]" />
-        </motion.div>
-      ) : null}
-
-      {/* Scan shimmer (gold) */}
-      {!reducedMotion ? (
-        <motion.div
-          className="absolute inset-0 opacity-35"
-          style={{
-            background: "linear-gradient(to bottom, transparent, rgba(250,204,21,0.11), transparent)",
-            mixBlendMode: "screen",
-          }}
-          initial={{ y: "-60%" }}
-          animate={{ y: "160%" }}
-          transition={{ duration: 7.8, repeat: Infinity, ease: "linear" }}
-        />
-      ) : null}
-
-      {/* Subtle grain */}
-      <div
-        className="absolute inset-0 opacity-[0.06]"
-        style={{
-          backgroundImage:
-            "repeating-radial-gradient(circle at 20% 30%, rgba(255,255,255,0.45) 0 1px, transparent 1px 6px)",
-          mixBlendMode: "overlay",
-        }}
-      />
-    </div>
+    <motion.div
+      aria-hidden
+      className="pointer-events-none fixed left-0 top-0 z-[60] -translate-x-1/2 -translate-y-1/2"
+      style={{ x, y }}
+    >
+      <div className="h-2.5 w-2.5 rounded-full bg-sky-200/95 shadow-[0_0_0_6px_rgba(56,189,248,0.12),0_0_26px_rgba(56,189,248,0.35)]" />
+    </motion.div>
   );
 }
 
@@ -231,63 +144,39 @@ function MagneticButton({
   className = "",
   onClick,
   type = "button",
-  reducedMotion = false,
   disabled = false,
 }: {
   children: React.ReactNode;
   className?: string;
   onClick?: () => void;
   type?: "button" | "submit" | "reset";
-  reducedMotion?: boolean;
   disabled?: boolean;
 }) {
-  const ref = useRef<HTMLButtonElement | null>(null);
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 320, damping: 20 });
-  const sy = useSpring(y, { stiffness: 320, damping: 20 });
-
   return (
-    <motion.button
-      ref={ref}
+    <button
       type={type}
-      disabled={disabled}
-      onPointerMove={(e) => {
-        if (disabled || reducedMotion) return;
-        const el = ref.current;
-        if (!el) return;
-        const r = el.getBoundingClientRect();
-        const dx = e.clientX - (r.left + r.width / 2);
-        const dy = e.clientY - (r.top + r.height / 2);
-        x.set(dx * 0.12);
-        y.set(dy * 0.12);
-      }}
-      onPointerLeave={() => {
-        x.set(0);
-        y.set(0);
-      }}
       onClick={disabled ? undefined : onClick}
-      style={reducedMotion || disabled ? undefined : ({ x: sx, y: sy } as any)}
+      disabled={disabled}
       className={cx(
         "group relative inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 text-sm font-semibold",
         "bg-white/10 ring-1 ring-white/15 backdrop-blur-xl",
-        "shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_80px_-30px_rgba(250,204,21,0.55)]",
+        "shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_20px_80px_-30px_rgba(16,185,129,0.55)]",
         "hover:bg-white/14 transition",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300/60",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300/60",
         disabled && "opacity-60 cursor-not-allowed hover:bg-white/10",
         className
       )}
     >
-      <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_30%_30%,rgba(250,204,21,0.22),transparent_55%)] opacity-0 group-hover:opacity-100 transition" />
+      <span className="absolute inset-0 rounded-2xl bg-[radial-gradient(circle_at_30%_30%,rgba(56,189,248,0.35),transparent_55%)] opacity-0 group-hover:opacity-100 transition" />
       <span className="relative z-10 inline-flex items-center gap-2">{children}</span>
-    </motion.button>
+    </button>
   );
 }
 
 function Pill({ children, icon: Icon }: { children: React.ReactNode; icon?: LucideIcon }) {
   return (
     <div className="inline-flex items-center gap-2 rounded-full bg-white/6 px-4 py-2 text-xs text-white/80 ring-1 ring-white/10">
-      {Icon ? <Icon className="h-4 w-4 text-amber-300" /> : null}
+      {Icon ? <Icon className="h-4 w-4 text-emerald-300" /> : null}
       <span>{children}</span>
     </div>
   );
@@ -363,10 +252,10 @@ function HowItWorksTimeline({ reducedMotion }: { reducedMotion: boolean }) {
             >
               <div className={cx(isLeft ? "lg:col-start-1" : "lg:col-start-2")}>
                 <div className="group relative overflow-hidden rounded-3xl bg-white/6 p-6 ring-1 ring-white/12 backdrop-blur-xl">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(250,204,21,0.16),transparent_55%)] opacity-0 transition group-hover:opacity-100" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.22),transparent_55%)] opacity-0 transition group-hover:opacity-100" />
                   <div className="relative z-10 flex items-start gap-4">
                     <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-                      <s.icon className="h-6 w-6 text-amber-300" />
+                      <s.icon className="h-6 w-6 text-emerald-300" />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
@@ -381,13 +270,16 @@ function HowItWorksTimeline({ reducedMotion }: { reducedMotion: boolean }) {
                 </div>
               </div>
 
-              {/* center node */}
               <div className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 lg:block">
-                <motion.div
-                  animate={reducedMotion ? {} : { scale: [1, 1.05, 1] }}
-                  transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-                  className="h-5 w-5 rounded-full bg-amber-300/80 shadow-[0_0_0_6px_rgba(250,204,21,0.12),0_0_0_1px_rgba(255,255,255,0.25)]"
-                />
+                {!reducedMotion ? (
+                  <motion.div
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                    className="h-5 w-5 rounded-full bg-emerald-300/80 shadow-[0_0_0_6px_rgba(16,185,129,0.14),0_0_0_1px_rgba(255,255,255,0.25)]"
+                  />
+                ) : (
+                  <div className="h-5 w-5 rounded-full bg-emerald-300/70 shadow-[0_0_0_6px_rgba(16,185,129,0.12),0_0_0_1px_rgba(255,255,255,0.25)]" />
+                )}
               </div>
 
               <div className={cx(isLeft ? "lg:col-start-2" : "lg:col-start-1", "hidden lg:block")}>
@@ -398,14 +290,15 @@ function HowItWorksTimeline({ reducedMotion }: { reducedMotion: boolean }) {
         })}
       </div>
 
-      {/* Animated flow line (mobile) */}
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-2 mx-auto h-1 w-4/5 rounded-full bg-gradient-to-r from-transparent via-amber-300/70 to-transparent opacity-50 lg:hidden"
-        initial={{ x: "-20%" }}
-        animate={reducedMotion ? {} : { x: ["-20%", "20%", "-20%"] }}
-        transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
-      />
+      {!reducedMotion ? (
+        <motion.div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 -top-2 mx-auto h-1 w-4/5 rounded-full bg-gradient-to-r from-transparent via-emerald-300/70 to-transparent opacity-50 lg:hidden"
+          initial={{ x: "-20%" }}
+          animate={{ x: ["-20%", "20%", "-20%"] }}
+          transition={{ duration: 6.5, repeat: Infinity, ease: "easeInOut" }}
+        />
+      ) : null}
     </div>
   );
 }
@@ -422,7 +315,7 @@ function ProductCards({ reducedMotion }: { reducedMotion: boolean }) {
           "Run what-if simulations inspired by big-tech digital twin programs (capacity, routing, supply risk)",
           "Stress-test reorder policies and promotions before you ship changes",
         ],
-        accent: "from-amber-400/22 via-yellow-300/12 to-white/8",
+        accent: "from-emerald-400/22 via-sky-400/12 to-amber-300/8",
       },
       {
         title: "Digital Worker",
@@ -433,7 +326,7 @@ function ProductCards({ reducedMotion }: { reducedMotion: boolean }) {
           "Drafts POs, reconciles shipments, and flags exceptions before they become losses",
           "Executes approved actions with audit logs, confidence gating, and rollback",
         ],
-        accent: "from-yellow-300/18 via-amber-400/12 to-white/8",
+        accent: "from-sky-400/22 via-emerald-400/12 to-amber-300/8",
       },
       {
         title: "Co-Pilot",
@@ -444,7 +337,7 @@ function ProductCards({ reducedMotion }: { reducedMotion: boolean }) {
           "Guided workflows with approvals, playbooks, and operator-in-the-loop control",
           "One place to ask, simulate, and execute—without leaving your stack",
         ],
-        accent: "from-amber-400/18 via-yellow-200/10 to-white/8",
+        accent: "from-emerald-400/18 via-sky-400/12 to-amber-300/8",
       },
     ],
     []
@@ -461,8 +354,8 @@ function ProductCards({ reducedMotion }: { reducedMotion: boolean }) {
           transition={{ duration: 0.6, delay: idx * 0.06 }}
           className="group relative overflow-hidden rounded-3xl bg-white/6 p-7 ring-1 ring-white/12 backdrop-blur-xl"
         >
-          <div className={cx("absolute inset-0 opacity-75", `bg-gradient-to-br ${p.accent}`)} />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,231,153,0.14),transparent_55%)] opacity-0 transition group-hover:opacity-100" />
+          <div className={cx("absolute inset-0 opacity-70", `bg-gradient-to-br ${p.accent}`)} />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.16),transparent_55%)] opacity-0 transition group-hover:opacity-100" />
           <div className="relative z-10">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -474,14 +367,14 @@ function ProductCards({ reducedMotion }: { reducedMotion: boolean }) {
                 <p className="mt-1 text-sm text-white/70">{p.subtitle}</p>
               </div>
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-                <p.icon className="h-6 w-6 text-amber-200" />
+                <p.icon className="h-6 w-6 text-emerald-200" />
               </div>
             </div>
 
             <ul className="mt-6 space-y-3">
               {p.bullets.map((b) => (
                 <li key={b} className="flex gap-3 text-sm text-white/78">
-                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-amber-300" />
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-300" />
                   <span>{b}</span>
                 </li>
               ))}
@@ -533,7 +426,7 @@ function AnimatedTerminal({ reducedMotion }: { reducedMotion: boolean }) {
     <div className="relative overflow-hidden rounded-3xl bg-black/40 ring-1 ring-white/12 backdrop-blur-xl">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
         <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
-          <div className="h-2 w-2 rounded-full bg-amber-300" />
+          <div className="h-2 w-2 rounded-full bg-emerald-300" />
           Golem Terminal
         </div>
         <div className="flex items-center gap-2 text-[11px] text-white/50">
@@ -557,8 +450,8 @@ function AnimatedTerminal({ reducedMotion }: { reducedMotion: boolean }) {
                 className={cx(
                   "mr-2 inline-flex items-center rounded-full px-2 py-1 text-[11px] font-semibold ring-1",
                   lines[index].k === "query"
-                    ? "bg-amber-400/15 text-amber-200 ring-amber-300/20"
-                    : "bg-amber-400/15 text-amber-200 ring-amber-300/20"
+                    ? "bg-sky-400/15 text-sky-200 ring-sky-300/20"
+                    : "bg-emerald-400/15 text-emerald-200 ring-emerald-300/20"
                 )}
               >
                 {lines[index].k === "query" ? "Operator" : "Golem"}
@@ -589,7 +482,7 @@ function AnimatedTerminal({ reducedMotion }: { reducedMotion: boolean }) {
       {!reducedMotion ? (
         <motion.div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(to_bottom,rgba(250,204,21,0.0),rgba(250,204,21,0.10),rgba(250,204,21,0.0))]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(to_bottom,rgba(16,185,129,0.0),rgba(16,185,129,0.12),rgba(16,185,129,0.0))]"
           initial={{ y: "-40%" }}
           animate={{ y: ["-40%", "120%", "-40%"] }}
           transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
@@ -611,7 +504,7 @@ function FAQ() {
       a: "We connect via secure APIs/webhooks to ERP, WMS, inventory, e-commerce, and fulfillment tools. Data is normalized into a live operational graph.",
     },
     {
-      q: "What makes it quantum-era / futuristic?",
+      q: "What makes it futuristic?",
       a: "We use probabilistic forecasting, confidence gating, and simulation (Digital Twins) so decisions are based on survivability—not guesses.",
     },
     {
@@ -643,7 +536,7 @@ function Footer() {
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 sm:flex-row">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/8 ring-1 ring-white/12">
-            <Database className="h-5 w-5 text-amber-300" />
+            <Database className="h-5 w-5 text-emerald-300" />
           </div>
           <div>
             <div className="text-sm font-semibold text-white">Golem AI</div>
@@ -688,7 +581,7 @@ function DemoForm({ reducedMotion }: { reducedMotion: boolean }) {
           required
           value={values.name}
           onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
-          className="w-full rounded-2xl bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/12 outline-none focus:ring-2 focus:ring-amber-300/40"
+          className="w-full rounded-2xl bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/12 outline-none focus:ring-2 focus:ring-emerald-300/40"
           placeholder="Your name"
         />
       </div>
@@ -705,7 +598,7 @@ function DemoForm({ reducedMotion }: { reducedMotion: boolean }) {
           required
           value={values.email}
           onChange={(e) => setValues((v) => ({ ...v, email: e.target.value }))}
-          className="w-full rounded-2xl bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/12 outline-none focus:ring-2 focus:ring-amber-300/40"
+          className="w-full rounded-2xl bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/12 outline-none focus:ring-2 focus:ring-emerald-300/40"
           placeholder="you@company.com"
         />
       </div>
@@ -721,12 +614,12 @@ function DemoForm({ reducedMotion }: { reducedMotion: boolean }) {
           required
           value={values.company}
           onChange={(e) => setValues((v) => ({ ...v, company: e.target.value }))}
-          className="w-full rounded-2xl bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/12 outline-none focus:ring-2 focus:ring-amber-300/40"
+          className="w-full rounded-2xl bg-white/8 px-4 py-3 text-sm text-white placeholder:text-white/40 ring-1 ring-white/12 outline-none focus:ring-2 focus:ring-emerald-300/40"
           placeholder="Company name"
         />
       </div>
 
-      <MagneticButton reducedMotion={reducedMotion} type="submit" className="w-full" disabled={isBusy}>
+      <MagneticButton type="submit" className="w-full" disabled={isBusy}>
         {status === "loading" ? "Submitting…" : status === "success" ? "Request received ✓" : "Submit"}
       </MagneticButton>
 
@@ -736,7 +629,7 @@ function DemoForm({ reducedMotion }: { reducedMotion: boolean }) {
         ) : null}
 
         {status === "success" ? (
-          <div className="text-[11px] text-amber-200/80">
+          <div className="text-[11px] text-emerald-200/80">
             Thanks — we’ll reach out shortly. (Demo mode: no network call was made.)
           </div>
         ) : null}
@@ -747,7 +640,7 @@ function DemoForm({ reducedMotion }: { reducedMotion: boolean }) {
   );
 }
 
-export default function GolumAILanding() {
+export default function GolemAILanding() {
   const reducedMotion = usePrefersReducedMotion();
 
   const scrollTo = useCallback(
@@ -759,14 +652,28 @@ export default function GolumAILanding() {
   );
 
   return (
-    <div className="min-h-screen bg-[#040308] text-white">
-      <QuantumBackdrop reducedMotion={reducedMotion} />
+    <div className="min-h-screen bg-[#06070B] text-white">
+      {/* Background */}
+      <div className="pointer-events-none fixed inset-0">
+        <QuantumGrid reducedMotion={reducedMotion} />
+        <GlowOrb seed={1} className="-left-40 -top-52" />
+        <GlowOrb seed={2} className="-right-44 top-20" />
 
+        {/* Removed purple blob. Replaced with black depth glow */}
+        <div className="absolute left-20 bottom-[-260px] h-[560px] w-[560px] rounded-full bg-black/70 blur-3xl" />
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.06),transparent_55%)]" />
+      </div>
+
+      {/* Cursor orb (fixed to real cursor, no lag) */}
+      <CursorOrb reducedMotion={reducedMotion} />
+
+      {/* Nav */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/30 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/8 ring-1 ring-white/12">
-              <Cpu className="h-5 w-5 text-amber-300" />
+              <Cpu className="h-5 w-5 text-emerald-300" />
             </div>
             <div className="leading-tight">
               <div className="text-sm font-semibold">Golem AI</div>
@@ -796,13 +703,14 @@ export default function GolumAILanding() {
             >
               Sign in
             </a>
-            <MagneticButton reducedMotion={reducedMotion} onClick={() => scrollTo("cta")}>
+            <MagneticButton onClick={() => scrollTo("cta")}>
               Request demo <ArrowRight className="h-4 w-4" />
             </MagneticButton>
           </div>
         </div>
       </header>
 
+      {/* Hero */}
       <main className="relative">
         <section className="relative mx-auto max-w-6xl px-6 pb-16 pt-14 sm:pt-20">
           <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
@@ -820,13 +728,9 @@ export default function GolumAILanding() {
                 className="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-6xl"
               >
                 Next-gen operations powered by{" "}
-                <motion.span
-                  className="text-transparent bg-clip-text bg-[linear-gradient(90deg,rgba(250,204,21,1),rgba(255,231,153,1),rgba(251,191,36,1),rgba(250,204,21,1))] bg-[length:240%_100%]"
-                  animate={reducedMotion ? {} : { backgroundPositionX: ["0%", "100%", "0%"] }}
-                  transition={{ duration: 8.5, repeat: Infinity, ease: "easeInOut" }}
-                >
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 via-sky-200 to-amber-200">
                   Golem AI
-                </motion.span>
+                </span>
               </motion.h1>
 
               <motion.p
@@ -840,7 +744,7 @@ export default function GolumAILanding() {
               </motion.p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-                <MagneticButton reducedMotion={reducedMotion} onClick={() => scrollTo("cta")}>
+                <MagneticButton onClick={() => scrollTo("cta")}>
                   Get a demo <ArrowRight className="h-4 w-4" />
                 </MagneticButton>
 
@@ -882,14 +786,14 @@ export default function GolumAILanding() {
                 <>
                   <motion.div
                     aria-hidden
-                    className="pointer-events-none absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-amber-300/20 blur-2xl"
-                    animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.55, 0.3] }}
+                    className="pointer-events-none absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-emerald-300/25 blur-2xl"
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.35, 0.55, 0.35] }}
                     transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut" }}
                   />
                   <motion.div
                     aria-hidden
-                    className="pointer-events-none absolute -top-10 -right-8 h-28 w-28 rounded-full bg-amber-300/18 blur-2xl"
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.25, 0.5, 0.25] }}
+                    className="pointer-events-none absolute -top-10 -right-8 h-28 w-28 rounded-full bg-sky-300/25 blur-2xl"
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.55, 0.3] }}
                     transition={{ duration: 4.9, repeat: Infinity, ease: "easeInOut" }}
                   />
                 </>
@@ -898,6 +802,7 @@ export default function GolumAILanding() {
           </div>
         </section>
 
+        {/* Products */}
         <section id="products" className="relative mx-auto max-w-6xl px-6 py-16">
           <SectionTitle
             kicker="Products"
@@ -907,6 +812,7 @@ export default function GolumAILanding() {
           <ProductCards reducedMotion={reducedMotion} />
         </section>
 
+        {/* How it works */}
         <section id="how" className="relative mx-auto max-w-6xl px-6 py-16">
           <SectionTitle
             kicker="How it works"
@@ -916,11 +822,12 @@ export default function GolumAILanding() {
           <HowItWorksTimeline reducedMotion={reducedMotion} />
         </section>
 
+        {/* Why */}
         <section id="why" className="relative mx-auto max-w-6xl px-6 py-16">
           <SectionTitle
             kicker="Why Golem"
             title="From dashboards to survivability — operations become a living system"
-            subtitle="We combine AI, simulation, and blockchain-ready auditability to reduce stockouts, protect margins, and compress operational risk."
+            subtitle="We combine AI, simulation, and auditability to reduce stockouts, protect margins, and compress operational risk."
           />
 
           <div className="mx-auto mt-10 grid max-w-6xl gap-6 lg:grid-cols-3">
@@ -949,10 +856,10 @@ export default function GolumAILanding() {
                 transition={{ duration: 0.6 }}
                 className="group relative overflow-hidden rounded-3xl bg-white/6 p-7 ring-1 ring-white/12 backdrop-blur-xl"
               >
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(250,204,21,0.14),transparent_60%)] opacity-0 transition group-hover:opacity-100" />
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(56,189,248,0.2),transparent_60%)] opacity-0 transition group-hover:opacity-100" />
                 <div className="relative z-10">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/15">
-                    <c.icon className="h-6 w-6 text-amber-200" />
+                    <c.icon className="h-6 w-6 text-emerald-200" />
                   </div>
                   <h3 className="mt-4 text-lg font-semibold text-white">{c.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-white/70">{c.desc}</p>
@@ -960,40 +867,19 @@ export default function GolumAILanding() {
               </motion.div>
             ))}
           </div>
-
-          <div className="mx-auto mt-10 max-w-6xl rounded-3xl bg-white/6 p-8 ring-1 ring-white/12 backdrop-blur-xl">
-            <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-center">
-              <div>
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/8 px-3 py-1 text-[11px] font-semibold text-white/70 ring-1 ring-white/12">
-                  <Blocks className="h-4 w-4 text-amber-300" />
-                  Tech Solutions & Blockchain
-                </div>
-                <h3 className="mt-3 text-2xl font-semibold text-white">Designed for trust, compliance, and speed</h3>
-                <p className="mt-2 max-w-2xl text-sm text-white/70">
-                  Whether you need an immutable audit trail or simply enterprise-grade tracking, Golem’s action layer is built
-                  for secure execution in regulated and mission-critical operations.
-                </p>
-              </div>
-              <MagneticButton reducedMotion={reducedMotion} onClick={() => scrollTo("cta")}>
-                Talk to us <ArrowRight className="h-4 w-4" />
-              </MagneticButton>
-            </div>
-          </div>
         </section>
 
+        {/* FAQ */}
         <section id="faq" className="relative mx-auto max-w-6xl px-6 py-16">
-          <SectionTitle
-            kicker="FAQ"
-            title="Everything you need to know"
-            subtitle="If you’re building the next generation of operations, we’re building the intelligence layer."
-          />
+          <SectionTitle kicker="FAQ" title="Everything you need to know" subtitle="We’re building the intelligence layer for modern operations." />
           <FAQ />
         </section>
 
+        {/* CTA */}
         <section id="cta" className="relative mx-auto max-w-6xl px-6 pb-24 pt-10">
           <div className="relative overflow-hidden rounded-3xl bg-white/6 p-10 ring-1 ring-white/12 backdrop-blur-xl">
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(250,204,21,0.18),transparent_55%)]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(255,231,153,0.14),transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.25),transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(56,189,248,0.22),transparent_55%)]" />
             <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
               <div>
                 <h3 className="text-balance text-3xl font-semibold tracking-tight text-white sm:text-4xl">
@@ -1024,3 +910,4 @@ export default function GolumAILanding() {
     </div>
   );
 }
+
