@@ -34,12 +34,15 @@ function usePrefersReducedMotion() {
       mq.addEventListener("change", update);
       return () => mq.removeEventListener("change", update);
     }
+// Safari fallback (older WebKit)
+const legacyMq = mq as MediaQueryList & {
+  addListener?: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => any) => void;
+  removeListener?: (listener: (this: MediaQueryList, ev: MediaQueryListEvent) => any) => void;
+};
 
-    // Safari fallback
-    // @ts-expect-error - older Safari
-    mq.addListener?.(update);
-    // @ts-expect-error - older Safari
-    return () => mq.removeListener?.(update);
+legacyMq.addListener?.(update as any);
+return () => legacyMq.removeListener?.(update as any);
+
   }, []);
 
   return reduced;
