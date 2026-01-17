@@ -251,7 +251,7 @@ function PrimaryButton({
         "bg-white/10 ring-1 ring-white/15 backdrop-blur-xl",
         "shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_30px_120px_-50px_rgba(56,189,248,0.55)]",
         "hover:bg-white/14 transition",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/60",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/25",
         className
       )}
     >
@@ -265,7 +265,7 @@ function GhostButton({ children, onClick }: { children: React.ReactNode; onClick
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center justify-center gap-2 rounded-[12px] bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/85 ring-1 ring-white/10 hover:bg-white/8 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300/50"
+      className="inline-flex items-center justify-center gap-2 rounded-[12px] bg-white/5 px-5 py-2.5 text-sm font-semibold text-white/85 ring-1 ring-white/10 hover:bg-white/8 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
     >
       {children}
     </button>
@@ -294,7 +294,7 @@ function AnimatedTerminal({ reducedMotion }: { reducedMotion: boolean }) {
   }, [reducedMotion, lines.length]);
 
   return (
-    <div className="relative overflow-hidden rounded-[16px] bg-black/45 ring-1 ring-white/12 backdrop-blur-xl">
+    <div className="relative overflow-hidden rounded-[16px] bg-black/45 ring-1 ring-white/10 backdrop-blur-xl">
       <div className="flex items-center justify-between border-b border-white/10 px-5 py-3">
         <div className="flex items-center gap-2 text-xs font-semibold text-white/70">
           <div className="h-2 w-2 rounded-[12px] bg-emerald-300" />
@@ -385,7 +385,7 @@ function FAQ() {
 
   return (
     <div className="mx-auto mt-10 max-w-4xl">
-      <div className="divide-y divide-white/10 overflow-hidden rounded-[16px] bg-white/6 ring-1 ring-white/12 backdrop-blur-xl">
+      <div className="divide-y divide-white/10 overflow-hidden rounded-[16px] bg-white/6 ring-1 ring-white/10 backdrop-blur-xl">
         {faqs.map((f) => (
           <details key={f.q} className="group p-6">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-left">
@@ -420,8 +420,8 @@ function DemoForm() {
   const isBusy = status === "loading" || status === "success";
 
   const inputClass =
-    "appearance-none bg-black/35 text-white placeholder:text-white/35 ring-1 ring-white/12 outline-none " +
-    "focus:ring-2 focus:ring-sky-300/45 w-full rounded-[12px] px-4 py-3 text-sm";
+    "appearance-none bg-black/35 text-white placeholder:text-white/35 ring-1 ring-white/10 outline-none " +
+    "focus:ring-2 focus:ring-white/20 w-full rounded-[12px] px-4 py-3 text-sm";
 
   return (
     <form onSubmit={onSubmit} className="mt-5 space-y-3">
@@ -697,7 +697,7 @@ export default function GolemAILanding() {
                 whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-80px" }}
                 transition={{ duration: 0.55, delay: idx * 0.05 }}
-                className="group relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/12 backdrop-blur-xl"
+                className="group relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/10 backdrop-blur-xl"
               >
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(56,189,248,0.12),transparent_60%)] opacity-0 transition group-hover:opacity-100" />
                 {/* Framer-like multi-frame edges */}
@@ -754,7 +754,7 @@ export default function GolemAILanding() {
               { icon: Cpu, title: "Digital Twin Sandbox", desc: "Test policies and risk before changes go live." },
               { icon: Lock, title: "Audit + Control", desc: "Evidence, confidence gating, abort conditions, rollback windows." },
             ].map((c) => (
-              <div key={c.title} className="relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/12 backdrop-blur-xl">
+              <div key={c.title} className="relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/10 backdrop-blur-xl">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.12),transparent_60%)] opacity-60" />
                 {/* Framer-like multi-frame edges */}
                 <div className="pointer-events-none absolute inset-0 rounded-[16px] ring-1 ring-white/10" />
@@ -792,7 +792,7 @@ export default function GolemAILanding() {
 
         {/* CTA */}
         <section id="cta" className="relative mx-auto max-w-6xl px-6 pb-24 pt-10">
-          <div className="relative overflow-hidden rounded-[16px] bg-white/6 p-10 ring-1 ring-white/12 backdrop-blur-xl">
+          <div className="relative overflow-hidden rounded-[16px] bg-white/6 p-10 ring-1 ring-white/8 backdrop-blur-xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.06),transparent_55%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(56,189,248,0.09),transparent_55%)]" />
             <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
@@ -808,7 +808,7 @@ export default function GolemAILanding() {
                 </p>
               </div>
 
-              <div className="rounded-[16px] bg-black/35 p-6 ring-1 ring-white/12 backdrop-blur-xl">
+              <div className="rounded-[16px] bg-black/35 p-6 ring-1 ring-white/8 backdrop-blur-xl">
                 <div className="text-sm font-semibold text-white">Request a demo</div>
                 <p className="mt-1 text-xs text-white/55">Leave details and we’ll reach out.</p>
                 <DemoForm />
