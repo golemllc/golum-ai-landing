@@ -279,7 +279,7 @@ function AnimatedTerminal({ reducedMotion }: { reducedMotion: boolean }) {
       { k: "golem", v: "Three SKUs at risk today." },
       { k: "query", v: "Next best action?" },
       { k: "golem", v: "Expedite PO 1842." },
-      { k: "query", v: "Lead time stable?" },
+      { k: "query", v: "Any delays today?" },
       { k: "golem", v: "Supplier B delayed four days." },
     ],
     []
@@ -792,7 +792,7 @@ export default function GolemAILanding() {
 
         {/* CTA */}
         <section id="cta" className="relative mx-auto max-w-6xl px-6 pb-24 pt-10">
-          <div className="relative overflow-hidden rounded-[16px] bg-white/6 p-10 ring-1 ring-white/8 backdrop-blur-xl">
+          <div className="relative overflow-hidden rounded-[16px] bg-white/6 p-10 border border-white/10 backdrop-blur-xl">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(16,185,129,0.06),transparent_55%)]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_30%,rgba(56,189,248,0.09),transparent_55%)]" />
             <div className="relative z-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
@@ -808,7 +808,7 @@ export default function GolemAILanding() {
                 </p>
               </div>
 
-              <div className="rounded-[16px] bg-black/35 p-6 ring-1 ring-white/8 backdrop-blur-xl">
+              <div className="rounded-[16px] bg-black/35 p-6 border border-white/10 backdrop-blur-xl">
                 <div className="text-sm font-semibold text-white">Request a demo</div>
                 <p className="mt-1 text-xs text-white/55">Leave details and we’ll reach out.</p>
                 <DemoForm />
