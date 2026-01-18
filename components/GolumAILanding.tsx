@@ -853,6 +853,98 @@ export default function GolemAILanding() {
           <HowItWorksFlow reducedMotion={reducedMotion} />
         </section>
 
+        function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
+  const cards = useMemo(
+    () => [
+      {
+        title: "Operational Graph",
+        icon: Database,
+        desc: "Your POS, inventory, e-com, and compliance data normalized into a single source of truth for reasoning.",
+      },
+      {
+        title: "Digital Twin Sandbox",
+        icon: Cpu,
+        desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro-actions.",
+      },
+      {
+        title: "Audit + Control",
+        icon: Lock,
+        desc: "Every recommendation includes evidence, confidence, abort conditions, and rollback windows. Blockchain-ready ledger if needed.",
+      },
+    ],
+    []
+  );
+
+  return (
+    <section id="why" className="relative mx-auto max-w-6xl px-6 py-16">
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,rgba(16,185,129,0.10),transparent_58%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_60%,rgba(56,189,248,0.10),transparent_62%)]" />
+      </div>
+
+      <div className="mx-auto max-w-3xl text-center">
+        <div className="mb-3 flex items-center justify-center">
+          <span className="inline-flex items-center gap-2 rounded-[12px] bg-white/6 px-4 py-2 text-xs font-semibold text-white/75 ring-1 ring-white/10">Why Golem
+          </span>
+        </div>
+
+        <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+          From dashboards to survivability: your operations become a living organism
+        </h2>
+        <p className="mt-4 text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
+          We combine AI, simulation, and blockchain-ready auditability to reduce stockouts, protect margins, and compress
+          operational risk.
+        </p>
+      </div>
+
+      <div className="mx-auto mt-10 grid max-w-6xl gap-6 lg:grid-cols-3">
+        {cards.map((c, idx) => (
+          <motion.div
+            key={c.title}
+            initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.55, delay: idx * 0.05 }}
+            className="relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/10 backdrop-blur-xl"
+          >
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.10),transparent_60%)] opacity-60" />
+
+            <div className="relative z-10">
+<h3 className="mt-4 text-lg font-semibold">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-sky-200 to-sky-100">
+                  {c.title}
+                </span>
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-white/70">{c.desc}</p>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      <div className="mx-auto mt-6 max-w-6xl">
+        <div className="relative overflow-hidden rounded-[16px] bg-white/6 p-8 ring-1 ring-white/10 backdrop-blur-xl">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_30%,rgba(56,189,248,0.10),transparent_60%)]" />
+          <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h3 className="text-xl font-semibold text-white">Designed for trust, compliance, and speed</h3>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
+                Whether you need an immutable audit trail or simply enterprise-grade tracking, Golem’s action layer is
+                built for secure execution in regulated industries.
+              </p>
+            </div>
+
+            <a
+              href="#cta"
+              className="inline-flex items-center justify-center gap-2 rounded-[12px] bg-white/8 px-5 py-2.5 text-sm font-semibold text-white/85 ring-1 ring-white/12 hover:bg-white/12 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/20"
+            >
+              Talk to us <ArrowRight className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
         {/* FAQ */}
         <section id="faq" className="relative mx-auto max-w-6xl px-6 py-16">
           <div className="mx-auto max-w-3xl text-center">
