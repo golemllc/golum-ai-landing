@@ -725,7 +725,7 @@ export default function GolemAILanding() {
                 transition={{ duration: 0.7 }}
                 className="mt-7 text-balance text-4xl font-semibold tracking-tight sm:text-6xl"
               >
-                Next-gen operations powered by <BrandMark className="whitespace-nowrap" />
+                Retail Ops x <span className="line-through decoration-gray-400 decoration-2">AI</span> Natural Language with <BrandMark className="whitespace-nowrap" />
               </motion.h1>
 
               <motion.p
