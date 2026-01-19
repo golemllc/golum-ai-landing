@@ -817,7 +817,7 @@ export default function GolemAILanding() {
                 icon: Cpu,
                 bullets: [
                   "Model inventory, warehousing, and fulfillment in real time",
-                  "Run what-if simulations inspired by big-tech twin programs",
+                  "Run what-if simulations and strategize",
                   "Stress-test reorder policies and supply risk before changes go live",
                 ],
               },
