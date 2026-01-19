@@ -817,7 +817,7 @@ export default function GolemAILanding() {
                 icon: Cpu,
                 bullets: [
                   "Model inventory, warehousing, and fulfillment in real time",
-                  "Run what-if simulations and strategize",
+                  "Run what-if simulations and plan ahead",
                   "Stress-test reorder policies and supply risk before changes go live",
                 ],
               },
@@ -895,7 +895,7 @@ export default function GolemAILanding() {
               <div>
                 <h3 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-sky-200 to-emerald-200 drop-shadow-[0_0_18px_rgba(56,189,248,0.18)]">
-                    Ready to deploy a Digital Worker and Digital Twin?
+                    Ready to deploy a Digital Worker and manage Ops in english?
                   </span>
                 </h3>
                 <p className="mt-3 max-w-2xl text-sm leading-relaxed text-white/70">
