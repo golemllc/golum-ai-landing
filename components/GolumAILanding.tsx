@@ -307,17 +307,17 @@ function HowItWorksSection({ reducedMotion }: { reducedMotion: boolean }) {
       {
         tag: "APIs + Connectors",
         title: "Connect",
-        desc: "Plug into POS, inventory, e-commerce, and compliance systems. Golem maps your data into a live operational graph.",
+        desc: "Plug into POS, inventory, e-commerce, and compliance systems. Golem maps your data into a live operational graph + gives you the capability of leveraging a real-time natural language engine that constantly talks to our context-protocol servers that sit atop Golem's federated live-learning models.",
       },
       {
         tag: "Grounded Insights",
         title: "Understand",
-        desc: "Golem reads sales, demand signals, product velocity, and customer behavior, then explains what matters in plain English.",
+        desc: "Golem reads sales, demand signals, product velocity, and customer behavior, then explains what matters in plain English. Reason supply chain and inventory management in natural language? Plus it'd be prescreptive, meaning a choice between n optimal routes, far from descriptive/static, and...technologically-possible? Yes.",
       },
       {
         tag: "Scenario Engine",
         title: "Simulate",
-        desc: "Run a Digital Twin sandbox to test promos, reorder policies, labor schedules, and wholesale decisions before you commit.",
+        desc: "Run a Digital Twin sandbox to test promos, reorder policies, labor schedules, and wholesale decisions before you commit. We're in the race to superintelligence. But what we are also after is 'expanding' AI with the Yin (human) and Yang (socio) to solve your business' EP's (Explainability Pitfalls). Inherent in our system design is learning and expanding with these seams.",
       },
       {
         tag: "Closed-Loop Ops",
@@ -327,7 +327,7 @@ function HowItWorksSection({ reducedMotion }: { reducedMotion: boolean }) {
       {
         tag: "Continuous Optimization",
         title: "Prove",
-        desc: "Measure outcomes and continuously learn. What works gets reinforced; what fails gets aborted and remembered.",
+        desc: "Measure outcomes and continuously learn. What works gets reinforced; what fails gets aborted and remembered. A seamless design will tell you the wi-fi is weak. A seamful one will answer you 'where'. A seamful design (as opposed to existing 'seamless' designs AI systems suffer from) means Golem's AI is designed not to conceal, but expand upon its 'seams' to reveal its blindspots and reduce information bloat.",
       },
     ],
     []
