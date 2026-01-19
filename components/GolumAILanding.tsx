@@ -784,9 +784,7 @@ export default function GolemAILanding() {
               Three modules. One unified intelligence layer.
             </h2>
             <p className="mt-4 text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
-              Simulate reality with Digital Twin, execute with a Digital Worker that lives in your workflow, Build a living operations system powered by an intel that evolves.
-
-.
+              Simulate reality with Digital Twin, execute with a Digital Worker that lives in your workflow, build a living operations system powered by an intel that evolves with your customer.
             </p>
           </div>
 
