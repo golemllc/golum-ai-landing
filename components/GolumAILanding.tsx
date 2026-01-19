@@ -714,7 +714,7 @@ export default function GolemAILanding() {
           <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
             <div>
               <div className="flex flex-wrap items-center gap-3">
-                <DotPill>Built for modern commerce ops</DotPill>
+                <DotPill>Built for modern commerce </DotPill>
                 <DotPill>Secure by design</DotPill>
                 <DotPill>Audit-ready execution</DotPill>
               </div>
