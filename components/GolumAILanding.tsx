@@ -421,7 +421,7 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
       },
       {
         title: "Audit + Control",
-        desc: "Every recommendation includes evidence, confidence, abort conditions, and rollback windows. We also support Blockchain-ready ledgers. A seamless design will tell you the wi-fi is weak. A seamful one will answer you 'where'. A seamful design (as opposed to existing 'seamless' designs AI systems suffer from) means Golem's AI is designed not to conceal, but expand upon its 'seams' to reveal blindspots and reduce information bloat.",
+        desc: "Every recommendation includes evidence, confidence, abort conditions, and rollback windows. We also support Blockchain-ready ledgers. A seamless design will tell you the wi-fi is weak. A seamful one will answer you 'where'. A seamful design (as opposed to existing 'seamless' designs AI systems suffer from) means Golem's AI is designed not to conceal, but expand upon its 'seams' to reveal potential blindspots and reduce information bloat.",
       },
     ],
     []
