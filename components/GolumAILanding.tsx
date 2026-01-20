@@ -409,9 +409,22 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
   const items = useMemo(
     () => [
       {
-        title: "Live Operational Graph / GPT",
-        desc: "Your POS, inventory, e-com, and compliance data normalized into a single source of truth for reasoning. Leverage a 'live' GPT that is informed in real-time & is powered/trained by Golem's federated live-learning models. <br /> ▶︎ •၊၊||၊|။||||۔‌‌‌‌‌၊|၊၊||၊|။||||۔‌‌‌‌‌၊|• 0:10",
-      },
+  title: "Live Operational Graph / GPT",
+  // Change "desc" from a string to a JSX Fragment
+  desc: (
+    <>
+      Your POS, inventory, e-com, and compliance data normalized into a single
+      source of truth for reasoning. Leverage a &apos;live&apos; GPT that is
+      informed in real-time &amp; is powered/trained by Golem&apos;s federated
+      live-learning models.
+      <br />
+      <br />
+      <span className="text-emerald-300 font-mono text-xs tracking-widest opacity-80">
+        ▶︎ •၊၊||၊|။||||۔‌‌‌‌‌၊|၊၊||၊|။||||۔‌‌‌‌‌၊|• 0:10
+      </span>
+    </>
+  ),
+},,
       {
         title: "Digital Twin Sandbox",
         desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro-actions. We love the idea of superintelligence. But what we are also after, beyond abstract mathematics and formalism, is 'expanding' artificial intelligence with the 'human' and 'socio' of your business' design to solve EPs (Explainability Pitfalls). Inherent in our system design is a large learning model that expands with these seams.",
