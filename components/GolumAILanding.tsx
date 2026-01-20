@@ -410,21 +410,21 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
     () => [
       {
         title: "Live Operational Graph / GPT",
-        // Change "desc" from a string to a JSX Fragment
+        // We use a JSX fragment <>...</> here to allow HTML tags like <br/>
         desc: (
           <>
-            Your POS, inventory, e-com, and compliance data normalized into a single
-            source of truth for reasoning. Leverage a &apos;live&apos; GPT that is
-            informed in real-time &amp; is powered/trained by Golem&apos;s federated
-            live-learning models.
+            Your POS, inventory, e-com, and compliance data normalized into a
+            single source of truth for reasoning. Leverage a 'live'
+            GPT that is informed in real-time & is powered/trained atop
+            Golem's federated live-learning models.
             <br />
             <br />
-            <span className="text-emerald-300 font-mono text-xs tracking-widest opacity-80">
+            <span className="font-mono text-xs tracking-widest text-emerald-300 opacity-80">
               ▶︎ •၊၊||၊|။||||۔‌‌‌‌‌၊|၊၊||၊|။||||۔‌‌‌‌‌၊|• 0:10
             </span>
           </>
         ),
-      },,
+      },
       {
         title: "Digital Twin Sandbox",
         desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro-actions. We love the idea of superintelligence. But what we are also after, beyond abstract mathematics and formalism, is 'expanding' artificial intelligence with the 'human' and 'socio' of your business' design to solve EPs (Explainability Pitfalls). Inherent in our system design is a large learning model that expands with these seams.",
@@ -452,35 +452,43 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
         </div>
 
         <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
-          From dashboards to survivability: your operations become a living organism
+          From dashboards to survivability: your operations become a living
+          organism
         </h2>
         <p className="mt-4 text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
-          We combine AI, simulation, and blockchain-ready auditability to reduce stockouts, protect margins, and compress
-          operational risk.
+          We combine AI, simulation, and blockchain-ready auditability to reduce
+          stockouts, protect margins, and compress operational risk.
         </p>
       </div>
 
       <div className="mx-auto mt-10 grid max-w-6xl gap-6 lg:grid-cols-3">
-        {items.map((c, idx) => (
-          <motion.div
-            key={c.title}
-            initial={reducedMotion ? false : { opacity: 0, y: 16 }}
-            whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.55, delay: idx * 0.05 }}
-            className="relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/10 backdrop-blur-xl"
-          >
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.10),transparent_60%)] opacity-60" />
-            <div className="relative z-10">
-              <h3 className="mt-1 text-lg font-semibold">
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-sky-200 to-sky-100">
-                  {c.title}
-                </span>
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">{c.desc}</p>
-            </div>
-          </motion.div>
-        ))}
+        {items.map((c, idx) => {
+          // GUARD CLAUSE: This fixes the "c is possibly undefined" error
+          if (!c) return null;
+
+          return (
+            <motion.div
+              key={c.title}
+              initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={reducedMotion ? {} : { opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-80px" }}
+              transition={{ duration: 0.55, delay: idx * 0.05 }}
+              className="relative overflow-hidden rounded-[16px] bg-white/6 p-7 ring-1 ring-white/10 backdrop-blur-xl"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(16,185,129,0.10),transparent_60%)] opacity-60" />
+              <div className="relative z-10">
+                <h3 className="mt-1 text-lg font-semibold">
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-200 via-sky-200 to-sky-100">
+                    {c.title}
+                  </span>
+                </h3>
+                <div className="mt-2 text-sm leading-relaxed text-white/70">
+                  {c.desc}
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       <div className="mx-auto mt-6 max-w-6xl">
@@ -488,10 +496,13 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_30%,rgba(56,189,248,0.10),transparent_60%)]" />
           <div className="relative z-10 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h3 className="text-xl font-semibold text-white">Designed for trust, compliance, and speed</h3>
+              <h3 className="text-xl font-semibold text-white">
+                Designed for trust, compliance, and speed
+              </h3>
               <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/70">
-                Whether you need an immutable audit trail or simply enterprise-grade tracking, Golem’s action layer is
-                built for secure execution in regulated industries.
+                Whether you need an immutable audit trail or simply
+                enterprise-grade tracking, Golem’s action layer is built for
+                secure execution in regulated industries.
               </p>
             </div>
 
