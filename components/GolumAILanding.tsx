@@ -841,7 +841,7 @@ export default function GolemAILanding() {
                     <div className="flex items-start gap-4">
                       <div>
                         <h3 className="text-2xl font-semibold">
-                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-200 via-cyan-200 to-emerald-200 drop-shadow-[0_0_18px_rgba(34,211,238,0.18)]">
+                          <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#A6E2EF] via-[#B1E7D8] to-[#CDECBB] drop-shadow-[0_0_18px_rgba(166,226,239,0.22)]">
                             {p.title}
                           </span>
                         </h3>
