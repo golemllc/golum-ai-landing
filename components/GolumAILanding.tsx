@@ -908,7 +908,7 @@ export default function GolemAILanding() {
 
               <div className="rounded-[16px] bg-black/35 p-6 border border-white/10 backdrop-blur-xl">
                 <div className="text-sm font-semibold text-white">Request a demo</div>
-                <p className="mt-1 text-xs text-white/55">Leave details and we’ll reach out...</p>
+                <p className="mt-1 text-xs text-white/55">Leave details and we&apos;ll reach out...</p>
                 <DemoForm />
               </div>
             </div>
