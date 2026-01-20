@@ -414,7 +414,7 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
       },
       {
         title: "Digital Twin Sandbox",
-        desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro-actions. We are in the same race to superintelligence as everybody else. But what we are also after, beyond abstract math, is 'expanding' artificial intelligence with the 'human' and 'socio' of design to solve your business' EPs (Explainability Pitfalls). Inherent in our system design is a large learning model that expands with these seams.",
+        desc: "Simulate promos, reorders, and workflows before going live. Reduce exposure with reversible micro-actions. We love the idea of superintelligence. But what we are also after, beyond abstract mathematics and formalism, is 'expanding' artificial intelligence with the 'human' and 'socio' of your business' design to solve EPs (Explainability Pitfalls). Inherent in our system design is a large learning model that expands with these seams.",
       },
       {
         title: "Audit + Control",
