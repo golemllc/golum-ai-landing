@@ -758,7 +758,7 @@ export default function GolemAILanding() {
                 transition={{ duration: 0.7, delay: 0.08 }}
                 className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-white/70 sm:text-lg"
               >
-                Golem is an AI operations layer. Our custom context protocols connect to your systems and help sand-box/execute safe, evidence-grounded realities.
+                Golem is an AI operations layer. Our custom context protocols connect to your systems helping you sand-box/execute safe, evidence-grounded realities.
               </motion.p>
 
               <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
