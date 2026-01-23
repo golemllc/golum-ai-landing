@@ -456,7 +456,7 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
           organism
         </h2>
         <p className="mt-4 text-pretty text-base leading-relaxed text-white/70 sm:text-lg">
-          We combine AI, simulation, and blockchain-ready auditability to reduce
+          Combine enterprise intelligent automation, artificial intelligence, simulation, and blockchain-ready auditability to reduce
           stockouts, protect margins, and compress operational risk.
         </p>
       </div>
