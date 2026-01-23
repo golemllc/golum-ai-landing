@@ -415,7 +415,7 @@ function WhyGolemSection({ reducedMotion }: { reducedMotion: boolean }) {
           <>
             Your POS, inventory, e-com, and compliance data normalized into a
             single source of truth for reasoning. Leverage a 'live'
-            GPT that is informed in real-time & is powered/trained atop
+            GPT that is informed in real-time and is powered/trained atop
             Golem's federated live-learning models.
             <br />
             <br />
