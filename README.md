@@ -1,2 +1,2 @@
-[Golum AI Landing Page
-](https://golemllc.github.io/golum-ai-landing/)
+[Golem AI Landing Page
+](https://golemllc.github.io/golem-ai-landing/)
